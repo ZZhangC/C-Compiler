@@ -3,10 +3,19 @@
 #include <string.h>
 #include <ctype.h>
 
-enum { T_PLUS, T_MINUS, T_STAR, T_SLASH, T_INTLIT };
+enum { T_EOF, T_PLUS, T_MINUS, T_STAR, T_SLASH, T_INTLIT };
+
+enum { A_ADD, A_SUBTRACT, A_MULTIPLY, A_DIVIDE, A_INTLIT };
 
 struct token {
 	int token;
+	int intValue;
+};
+
+struct astNode {
+	struct astNode *left;
+	struct astNode *right;
+	int op;
 	int intValue;
 };
 

@@ -7,25 +7,7 @@
 
 static void init(void) {
 	line = 1;
-	putBack = '\n';
-}
-
-//debug
-char *tokStr[] = { "+", "-", "*", "/", "INTLIT" };
-//
-
-
-void scanFile(void) {
-	struct token T;
-	
-	//debug
-	while (scan(&T)) {
-		printf("Token %s\n", tokStr[T.token]);
-		if (T.token == T_INTLIT) {
-			printf("Value %d\n", T.intValue);
-		}
-		printf("\n");
-	}
+	putBack = 0;
 }
 
 static void usage(char *prog) {
@@ -45,7 +27,12 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 
-	scanFile();
+	struct astNode *n;
+
+	scan(&currToken);
+	n = unintpASTTree();
+	int res = interpretAST(n);
+	printf("Result: %d\n", res);
 
 	exit(0);
 }

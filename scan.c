@@ -1,14 +1,15 @@
-//debug
-#include <stdio.h>
-//
-#include "data.h"
 #include "defs.h"
+#include "data.h"
+#include "decl.h"
 
 // Process with input stream
 static int next(void) {
 	int c;
 
 	if (putBack) {
+		//debug
+		printf("putback: %c\n", putBack);
+		//
 		c = putBack;
 		putBack = 0;
 		return c;
@@ -63,7 +64,7 @@ int scan(struct token *t) {
 
 	switch (c) {
 		case EOF:
-			return 0;
+			t->token = T_EOF;
 			break;
 		case '+':
 			t->token = T_PLUS;
@@ -76,6 +77,7 @@ int scan(struct token *t) {
 			break;
 		case '/':
 			t->token = T_SLASH;
+			break;
 		default:
 			if (isdigit(c)) {
 				t->token = T_INTLIT;

@@ -1,4 +1,21 @@
 learning from https://github.com/DoctorWkt/acwj
 compile workflow: high-level input -> lexical analysis -> grammar analysis -> semantic analysis -> translate meaning -> low-level output
+
 use #define extern_ extern to avoid repeated definitions
 use global varible line, putBack and inFile
+
+BNF: Backus-Naur Form
+BNF description of grammar: sth: def1 | def2 | ...
+definitions can be recursive
+non-terminal symbols are symbols that are produced by rules
+terminal symbols are symbols that are not produced by rules
+recursive descent parsing
+for example, math expressions
+func expr()
+	scan and check if the token is a digit, ERROR if not
+	get next token
+	if next token is EOF, return
+	otherwise, call expr()
+
+use Abstract Syntax Trees(ASTs) to store an expression for easier interpreting
+in a mathmatical expression, the first node must be a digit
