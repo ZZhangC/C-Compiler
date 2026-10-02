@@ -1,0 +1,4 @@
+learning from https://github.com/DoctorWkt/acwj
+compile workflow: high-level input -> lexical analysis -> grammar analysis -> semantic analysis -> translate meaning -> low-level output
+use #define extern_ extern to avoid repeated definitions
+use global varible line, putBack and inFile
