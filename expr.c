@@ -2,6 +2,18 @@
 #include "data.h"
 #include "decl.h"
 
+static int opPrec[] = {0, 1, 1, 2, 2, 0};
+
+// Return the precedence of an operator
+static int getOpPrec(int tokenType) {
+	int prec = opPrec[tokenType];
+	if (prec == 0) {
+		fprintf(stderr, "Syntax error on line %d, token %d\n", line, tokenType);
+		exit(1);
+	}
+	return prec;
+}
+
 // Build the first AST node
 static struct astNode *getPrimaryNode(void) {
 	struct astNode *n;
@@ -34,8 +46,12 @@ int tokenToASTOp(int token) {
 	}
 }
 
+
+// -------  Incorrect Method ------- //
+// This method can not fix the probl //
+// em of precedence                  //
+// -------                   ------- //
 // Build an uninterpreted AST tree
-// This function is only for binary expressions for now
 struct astNode *unintpASTTree(void) {
 	struct astNode *n, *left, *right;
 	int nodeType;
@@ -56,3 +72,83 @@ struct astNode *unintpASTTree(void) {
 	return n;
 }
 
+
+// -------    Warning    ------- //
+// This method has a bad extensi //
+// bility                        //
+// -------               ------- //
+// Process with multiplicative expressions
+struct astNode *multiplicativeExpr(void) {
+	struct astNode *left, *right;
+	int tokenType;
+
+	left = getPrimaryNode();
+	
+	tokenType = currToken.token;
+
+	if (tokenType == T_EOF)
+		return left;
+
+	while (tokenType == T_STAR || tokenType == T_SLASH) {
+		scan(&currToken);
+
+		right = getPrimaryNode();
+		left = mkASTNode(left, right, tokenToASTOp(tokenType), 0);
+
+		tokenType = currToken.token;
+		if (tokenType == T_EOF)
+			break;
+	}
+
+	return left;
+}
+	
+// Process with additive expressions
+struct astNode *additiveExpr(void) {
+	struct astNode *left, *right;
+	int tokenType;
+
+	left = multiplicativeExpr();
+
+	tokenType = currToken.token;
+
+	if (tokenType == T_EOF)
+		return left;
+
+	while (1) {
+		scan(&currToken);
+		
+		right = multiplicativeExpr();
+		left = mkASTNode(left, right, tokenToASTOp(tokenType), 0);
+
+		tokenType = currToken.token;
+		if (tokenType == T_EOF)
+			break;
+	}
+}
+
+// A better method for processing binary expressions
+struct astNode *binExpr(int parPrec) {
+	struct astNode *left, *right;
+	int tokenType;
+
+	left = getPrimaryNode();
+
+	tokenType = currToken.token;
+	
+	if (tokenType == T_EOF)
+		return left;
+
+	while (getOpPrec(tokenType) > parPrec) {
+		scan(&currToken);
+
+		right = binExpr(opPrec[tokenType]);
+		left = mkASTNode(left, right, tokenToASTOp(tokenType), 0);
+
+		tokenType = currToken.token;
+		if (tokenType == T_EOF)
+			return left;
+	}
+
+	return left;
+}

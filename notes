@@ -19,3 +19,5 @@ func expr()
 
 use Abstract Syntax Trees(ASTs) to store an expression for easier interpreting
 in a mathmatical expression, the first node must be a digit
+
+we have additive_expr: multiplicative_expr '+' multiplicative_expr | ... '-' ..., and multiplicative_expr: multi... '*' multi... | number '*' number | ...

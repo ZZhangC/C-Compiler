@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
 	struct astNode *n;
 
 	scan(&currToken);
-	n = unintpASTTree();
+	n = binExpr(0);
 	int res = interpretAST(n);
 	printf("Result: %d\n", res);
 
