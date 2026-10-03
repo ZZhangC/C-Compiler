@@ -2,8 +2,14 @@
 #include "data.h"
 #include "decl.h"
 
+// Front-end codes
+void genPreamble() { genASMPreamble(); }
+void genPostamble() { genASMPostamble(); }
+void genFreeRegs() { setAllRegFree(); }
+void genPrintInt(int reg) { genASMPrintInt(reg); }
+
 // Generate ASM code from ASTs
-static int procAST(struct astNode *n) {
+int procAST(struct astNode *n) {
 	int leftReg, rightReg;
 
 	if (n->left) leftReg = procAST(n->left);
@@ -22,12 +28,3 @@ static int procAST(struct astNode *n) {
 	}
 }
 
-// Generate whole ASM code
-void genASM(struct astNode *n) {
-	int reg;
-
-	genASMPreamble();
-	reg = procAST(n);
-	genASMPrintInt(reg);
-	genASMPostamble();
-}

@@ -47,9 +47,13 @@ int tokenToASTOp(int token) {
 }
 
 
+
+
 // -------  Incorrect Method ------- //
 // This method can not fix the probl //
 // em of precedence                  //
+// This would not be updated after 0 //
+// 3 Precedence                      //
 // -------                   ------- //
 // Build an uninterpreted AST tree
 struct astNode *unintpASTTree(void) {
@@ -71,11 +75,11 @@ struct astNode *unintpASTTree(void) {
 
 	return n;
 }
-
-
 // -------    Warning    ------- //
 // This method has a bad extensi //
 // bility                        //
+// This would not be updated aft //
+// er 03 Precedence              //
 // -------               ------- //
 // Process with multiplicative expressions
 struct astNode *multiplicativeExpr(void) {
@@ -102,7 +106,6 @@ struct astNode *multiplicativeExpr(void) {
 
 	return left;
 }
-	
 // Process with additive expressions
 struct astNode *additiveExpr(void) {
 	struct astNode *left, *right;
@@ -127,6 +130,9 @@ struct astNode *additiveExpr(void) {
 	}
 }
 
+
+
+
 // A better method for processing binary expressions
 struct astNode *binExpr(int parPrec) {
 	struct astNode *left, *right;
@@ -136,17 +142,17 @@ struct astNode *binExpr(int parPrec) {
 
 	tokenType = currToken.token;
 	
-	if (tokenType == T_EOF)
+	if (tokenType == T_EOF || tokenType == T_SEMI)
 		return left;
 
 	while (getOpPrec(tokenType) > parPrec) {
 		scan(&currToken);
 
-		right = binExpr(opPrec[tokenType]);
+		right = binExpr(getOpPrec(tokenType));
 		left = mkASTNode(left, right, tokenToASTOp(tokenType), 0);
 
 		tokenType = currToken.token;
-		if (tokenType == T_EOF)
+		if (tokenType == T_EOF || tokenType == T_SEMI)
 			return left;
 	}
 

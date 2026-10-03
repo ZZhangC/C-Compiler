@@ -33,14 +33,10 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 
-	struct astNode *n;
-
 	scan(&currToken);
-	n = binExpr(0);
-	int res = interpretAST(n);
-	printf("Result: %d\n", res);
-
-	genASM(n);
+	genPreamble();
+	statements();
+	genPostamble();
 	
 	fclose(outFile);
 

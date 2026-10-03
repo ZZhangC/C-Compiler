@@ -7,9 +7,6 @@ static int next(void) {
 	int c;
 
 	if (putBack) {
-		//debug
-		printf("putback: %c\n", putBack);
-		//
 		c = putBack;
 		putBack = 0;
 		return c;
@@ -56,9 +53,41 @@ static int scanInt(int c) {
 	return val;
 }
 
+// Scan identifiers and store in buffer
+static int scanIdent(int c, char *buf, int lim) {
+	int i = 0;
+
+	while (isalpha(c) || isdigit(c) || '_' == c) {
+		if (i == lim - 1) {
+			fprintf(stderr, "Identifier too long on Line %d\n", line);
+			exit(1);
+		}
+
+		buf[i] = c;
+		i++;
+		c = next();
+	}
+
+	putBackChar(c);
+	buf[i] = '\0';
+	return i;
+}
+
+// Identifiers to tokens
+static int keywordToToken(char *s) {
+	switch (*s) {
+		case 'p':
+			if(!strcmp(s, "printf"))
+				return T_PRINT;
+			break;
+	}
+
+	return 0;
+}
+
 // Entrance of token scanning function
 int scan(struct token *t) {
-	int c;
+	int c, tokenType;
 
 	c = skip();
 
@@ -78,11 +107,25 @@ int scan(struct token *t) {
 		case '/':
 			t->token = T_SLASH;
 			break;
+		case ';':
+			t->token = T_SEMI;
+			break;
 		default:
 			if (isdigit(c)) {
 				t->token = T_INTLIT;
 				t->intValue = scanInt(c);
 				break;
+			}
+			else if (isalpha(c) || '_' == c) {
+				scanIdent(c, buf, BUFLEN);
+				tokenType = keywordToToken(buf);
+				if (tokenType) {
+					t->token = tokenType;
+					break;
+				}
+				//debug
+				printf("Unrecognised symbol %s on Line %d\n", buf, line);
+				exit(1);
 			}
 			//debug
 			printf("Unrecognised character %c on Line %d\n", c, line);

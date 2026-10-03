@@ -1,11 +1,11 @@
-scan:
-	cc -o scanner -g main.c, scan.c
+comp:
+	cc -o comp -g asm.c expr.c gen.c main.c misc.c scan.c stmt.c tree.c
 
-parse:
-	cc -o parser -g expr.c intp.c main.c scan.c tree.c
-
-asm:
-	cc -o asm -g asm.c expr.c intp.c tree.c gen.c main.c scan.c
+test1:
+	cc -o comp -g asm.c expr.c gen.c main.c misc.c scan.c stmt.c tree.c
+	./comp ./Tests/test1
+	cc -o out out.s
+	./out
 
 clean:
-	rm -f scanner parser asm out.s *.o
+	rm -f comp out.s out *.o
