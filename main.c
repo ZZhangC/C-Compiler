@@ -23,7 +23,13 @@ int main(int argc, char* argv[]) {
 	
 	inFile = fopen(argv[1], "r");
 	if (inFile == NULL) {
-		fprintf(stderr, "Unable to open %s\n", argv[1], strerror(errno));
+		fprintf(stderr, "Unable to open %s: %s\n", argv[1], strerror(errno));
+		exit(1);
+	}
+
+	outFile = fopen("out.s", "w");
+	if (outFile == NULL) {
+		fprintf(stderr, "Unable to create out.s: %s\n", strerror(errno));
 		exit(1);
 	}
 
@@ -33,6 +39,10 @@ int main(int argc, char* argv[]) {
 	n = binExpr(0);
 	int res = interpretAST(n);
 	printf("Result: %d\n", res);
+
+	genASM(n);
+	
+	fclose(outFile);
 
 	exit(0);
 }
