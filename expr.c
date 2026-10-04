@@ -17,16 +17,24 @@ static int getOpPrec(int tokenType) {
 // Build the first AST node
 static struct astNode *getPrimaryNode(void) {
 	struct astNode *n;
+	int id;
 	
 	switch (currToken.token) {
 		case T_INTLIT:
 			n = mkASTLeaf(A_INTLIT, currToken.intValue);
-			scan(&currToken);
-			return n;
+			break;
+		case T_IDENT:
+			id = findGlob(buf);
+			if (id == -1)
+				fatals("Unknown variable", buf);
+			n = mkASTLeaf(A_IDENT, id);
+			break;
 		default:
-			fprintf(stderr, "Syntax error on Line %d\n", line);
+			fatald("Syntax error, token", currToken.token);
 			exit(1);
 	}
+	scan(&currToken);
+	return n;
 }
 
 // Convert a token to an AST operation

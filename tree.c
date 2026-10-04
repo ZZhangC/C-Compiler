@@ -15,7 +15,7 @@ struct astNode *mkASTNode(struct astNode *left, struct astNode *right, int op, i
 	n->left = left;
 	n->right = right;
 	n->op = op;
-	n->intValue = intValue;
+	n->val.intValue = intValue;
 
 	return n;
 }

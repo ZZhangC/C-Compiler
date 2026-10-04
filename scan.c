@@ -77,8 +77,13 @@ static int scanIdent(int c, char *buf, int lim) {
 static int keywordToToken(char *s) {
 	switch (*s) {
 		case 'p':
-			if(!strcmp(s, "printf"))
+			if (!strcmp(s, "printf"))
 				return T_PRINT;
+			break;
+
+		case 'i':
+			if (!strcmp(s, "int"))
+				return T_INT;
 			break;
 	}
 
@@ -110,6 +115,9 @@ int scan(struct token *t) {
 		case ';':
 			t->token = T_SEMI;
 			break;
+		case '=':
+			t->token = T_EQUALS;
+			break;
 		default:
 			if (isdigit(c)) {
 				t->token = T_INTLIT;
@@ -123,9 +131,9 @@ int scan(struct token *t) {
 					t->token = tokenType;
 					break;
 				}
-				//debug
-				printf("Unrecognised symbol %s on Line %d\n", buf, line);
-				exit(1);
+
+				t->token = T_IDENT;
+				break;
 			}
 			//debug
 			printf("Unrecognised character %c on Line %d\n", c, line);

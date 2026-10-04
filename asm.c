@@ -105,3 +105,18 @@ void genASMPrintInt(int r) {
 	fprintf(outFile, "\tcall\tprintint\n");
 	setRegFree(r);
 }
+
+int genASMLoadGlob(char *ident) {
+	int r = allocReg();
+	fprintf(outFile, "\tmovq\t%s(\%%rip), %s\n", ident, regList[r]);
+	return r;
+}
+
+int genASMStorGlob(int r, char *ident) {
+	fprintf(outFile, "\tmovq\t%s, %s(\%%rip)\n", regList[r], ident);
+	return r;
+}
+
+void genASMGlobSym(char *sym) {
+	fprintf(outFile, "\t.comm\t%s,8,8\n", sym);
+}
