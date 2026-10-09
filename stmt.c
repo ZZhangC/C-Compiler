@@ -28,7 +28,7 @@ void stmtAssign(void) {
 
 	right = mkASTLeaf(A_LVALIDENT, id);
 
-	matchToken(T_EQUALS, "=");
+	matchToken(T_ASSIGN, "=");
 
 	left = binExpr(0);
 

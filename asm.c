@@ -4,6 +4,7 @@
 
 static int freeReg[4];
 static char *regList[4] = { "%r8", "%r9", "%r10", "%r11" };
+static char *bregList[4] = { "%r8b", "%r9b", "%r10b", "%r11b" };
 
 // Set all registers as available
 void setAllRegFree(void) {
@@ -120,3 +121,18 @@ int genASMStorGlob(int r, char *ident) {
 void genASMGlobSym(char *sym) {
 	fprintf(outFile, "\t.comm\t%s,8,8\n", sym);
 }
+
+int genASMCompare(int r1, int r2, char *method) {
+	fprintf(outFile, "\tcmpq\t%s, %s\n", regList[r2], regList[r1]);
+	fprintf(outFile, "\t%s\t%s\n", method, bregList[r2]);
+	fprintf(outFile, "\tandq\t$255,%s\n", regList[r2]);
+	setRegFree(r1);
+	return r2;
+}
+
+int genASMEqual(int r1, int r2) { return genASMCompare(r1, r2, "sete"); }
+int genASMNotEqual(int r1, int r2) { return genASMCompare(r1, r2, "setne"); }
+int genASMLessThan(int r1, int r2) { return genASMCompare(r1, r2, "setl"); }
+int genASMGreatThan(int r1, int r2) { return genASMCompare(r1, r2, "setg"); }
+int genASMLessEqual(int r1, int r2) { return genASMCompare(r1, r2, "setle"); }
+int genASMGreatEqual(int r1, int r2) { return genASMCompare(r1, r2, "setge"); }

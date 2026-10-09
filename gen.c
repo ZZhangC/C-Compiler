@@ -33,6 +33,18 @@ int procAST(struct astNode *n, int reg) {
 			return genASMStorGlob(reg, globSym[n->val.id].name);
 		case A_ASSIGN:
 			return rightReg;
+		case A_EQUALS:
+			return genASMEqual(leftReg, rightReg);
+		case A_NOTEQUAL:
+			return genASMNotEqual(leftReg, rightReg);
+		case A_LESSTHAN:
+			return genASMLessThan(leftReg, rightReg);
+		case A_GREATTHAN:
+			return genASMGreatThan(leftReg, rightReg);
+		case A_LESSEQUAL:
+			return genASMLessEqual(leftReg, rightReg);
+		case A_GREATEQUAL:
+			return genASMGreatEqual(leftReg, rightReg);
 
 		default:
 			fprintf(stderr, "Unknown AST operation %d\n", n->op);
