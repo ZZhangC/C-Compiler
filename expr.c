@@ -2,7 +2,13 @@
 #include "data.h"
 #include "decl.h"
 
-static int opPrec[] = {0, 1, 1, 2, 2, 0};
+static int opPrec[] = {
+	0,
+	1, 1,
+	2, 2,
+	3, 3,
+	4, 4, 4, 4,
+};
 
 // Return the precedence of an operator
 static int getOpPrec(int tokenType) {
@@ -39,19 +45,9 @@ static struct astNode *getPrimaryNode(void) {
 
 // Convert a token to an AST operation
 int tokenToASTOp(int token) {
-	switch (token) {
-		case T_PLUS:
-			return A_ADD;
-		case T_MINUS:
-			return A_SUBTRACT;
-		case T_STAR:
-			return A_MULTIPLY;
-		case T_SLASH:
-			return A_DIVIDE;
-		default:
-			fprintf(stderr, "Unknown token in tokenToASTOp() on Line %d\n", line);
-			exit(1);
-	}
+	if (token > T_EOF && token < T_INTLIT)
+		return token;
+	fatald("Syntax error, token", token);
 }
 
 

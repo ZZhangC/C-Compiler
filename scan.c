@@ -116,7 +116,38 @@ int scan(struct token *t) {
 			t->token = T_SEMI;
 			break;
 		case '=':
-			t->token = T_EQUALS;
+			c = next();
+			if (c == '=')
+				t->token = T_EQUALS;
+			else {
+				putBackChar(c);
+				t->token = T_ASSIGN;
+			}
+			break;
+		case '!':
+			c = next();
+			if (c == '=')
+				t->token = T_NOTEQUAL;
+			else
+				fatalc("Unrecognised character", c);
+			break;
+		case '<':
+			c = next();
+			if (c == '=')
+				t->token = T_LESSEQUAL;
+			else {
+				putBackChar(c);
+				t->token = T_LESSTHAN;
+			}
+			break;
+		case '>':
+			c = next();
+			if (c == '=')
+				t->token = T_GREATEQUAL;
+			else {
+				putBackChar(c);
+				t->token = T_GREATTHAN;
+			}
 			break;
 		default:
 			if (isdigit(c)) {

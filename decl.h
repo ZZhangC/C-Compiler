@@ -33,6 +33,12 @@ int genASMDiv(int r1, int r2);
 void genASMPrintInt(int r);
 int genASMStorGlob(int r, char *ident);
 void genASMGlobSym(char *sym);
+int genASMEqual(int r1, int r2);
+int genASMNotEqual(int r1, int r2);
+int genASMLessThan(int r1, int r2);
+int genASMGreatThan(int r1, int r2);
+int genASMLessEqual(int r1, int r2);
+int genASMGreatEqual(int r1, int r2);
 
 // stmt.c
 void statements(void);
