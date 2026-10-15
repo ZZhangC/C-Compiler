@@ -5,6 +5,14 @@
 static int freeReg[4];
 static char *regList[4] = { "%r8", "%r9", "%r10", "%r11" };
 static char *bregList[4] = { "%r8b", "%r9b", "%r10b", "%r11b" };
+static char *cmpList[] = { "sete", "setne", "setl", "setg", "setle", "setge" };
+static char *invCmpList[] = { "jne", "je", "jge", "jle", "jg", "jl" };
+
+// Generate a label number
+static int genLabel(void) {
+	static int id = 1;
+	return id++;
+}
 
 // Set all registers as available
 void setAllRegFree(void) {
@@ -122,17 +130,54 @@ void genASMGlobSym(char *sym) {
 	fprintf(outFile, "\t.comm\t%s,8,8\n", sym);
 }
 
-int genASMCompare(int r1, int r2, char *method) {
-	fprintf(outFile, "\tcmpq\t%s, %s\n", regList[r2], regList[r1]);
-	fprintf(outFile, "\t%s\t%s\n", method, bregList[r2]);
-	fprintf(outFile, "\tandq\t$255,%s\n", regList[r2]);
-	setRegFree(r1);
-	return r2;
+void genASMLabel(int l) {
+	fprintf(outFile, "L%d:\n", l);
 }
 
-int genASMEqual(int r1, int r2) { return genASMCompare(r1, r2, "sete"); }
-int genASMNotEqual(int r1, int r2) { return genASMCompare(r1, r2, "setne"); }
-int genASMLessThan(int r1, int r2) { return genASMCompare(r1, r2, "setl"); }
-int genASMGreatThan(int r1, int r2) { return genASMCompare(r1, r2, "setg"); }
-int genASMLessEqual(int r1, int r2) { return genASMCompare(r1, r2, "setle"); }
-int genASMGreatEqual(int r1, int r2) { return genASMCompare(r1, r2, "setge"); }
+void genASMJump(int l) {
+	fprintf(outFile, "\tjmp\tL%d\n", l);
+}
+
+static int genASMIf(struct astNode *n) {
+	int labelFalse, labelEnd;
+
+	labelFalse = genLabel();
+	if (n->right)
+		labelEnd = genLabel();
+	
+	procAST(n->left, labelFalse, n->op);
+	genFreeRegs();
+	procAST(n->mid, NOREG, n->op);
+	genFreeRegs();
+	if (n->right)
+		genASMJump(labelEnd);
+	genASMLabel(labelFalse);
+	if (n->right) {
+		procAST(n->right, NOREG, n->op);
+		genFreeRegs();
+		genASMLabel(labelEnd);
+	}
+
+	return NOREG;
+}
+
+int genASMCmpAndSet(int op, int r1, int r2) {
+	if (op < A_EQUALS || op > A_GREATEQUAL)
+		fatal("Bad ASTop in cgcompare_and_set()");
+
+	fprintf(outFile, "\tcmpq\t%s, %s\n", regList[r2], regList[r1]);
+	fprintf(outFile, "\t%s\t%s\n", cmpList[op - A_EQUALS], bregList[r2]);
+	fprintf(outFile, "\tmovzbq\t%s, %s\n", bregList[r2], regList[r2]);
+	setRegFree(r1);
+	return (r2);
+}
+
+int genASMCmpAndJmp(int op, int r1, int r2, int label) {
+	if (op < A_EQUALS || op > A_GREATEQUAL)
+		fatal("Bad ASTop in cgcompare_and_set()");
+
+	fprintf(outFile, "\tcmpq\t%s, %s\n", regList[r2], regList[r1]);
+	fprintf(outFile, "\t%s\tL%d\n", invCmpList[op - A_EQUALS], label);
+	setAllRegFree();
+	return (NOREG);
+}

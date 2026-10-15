@@ -4,6 +4,8 @@
 #include <ctype.h>
 
 #define BUFLEN 512
+#define NSYMBOLS 1024
+#define NOREG -1
 
 enum {
 	T_EOF,
@@ -12,7 +14,9 @@ enum {
 	T_EQUALS, T_NOTEQUAL,
 	T_LESSTHAN, T_GREATTHAN, T_LESSEQUAL, T_GREATEQUAL,
 	T_INTLIT, T_SEMI, T_ASSIGN, T_IDENT,
-	T_PRINT, T_INT
+	T_LBRACE, T_RBRACE, T_LPAREN, T_RPAREN,
+	T_PRINT, T_INT,
+	T_IF, T_ELSE
 };
 
 enum {
@@ -21,7 +25,7 @@ enum {
 	A_EQUALS, A_NOTEQUAL,
 	A_LESSTHAN, A_GREATTHAN, A_LESSEQUAL, A_GREATEQUAL,
 	A_INTLIT,
-	A_IDENT, A_LVALIDENT, A_ASSIGN
+	A_IDENT, A_LVALIDENT, A_ASSIGN, A_PRINT, A_GLUE, A_IF
 };
 
 struct token {
@@ -31,6 +35,7 @@ struct token {
 
 struct astNode {
 	struct astNode *left;
+	struct astNode *mid;
 	struct astNode *right;
 	int op;
 	union {

@@ -2,8 +2,6 @@
 	#define extern_ extern
 #endif
 
-#define NSYMBOLS 1024
-
 extern_ int line;
 extern_ int putBack;
 extern_ FILE *inFile;

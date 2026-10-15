@@ -153,7 +153,7 @@ struct astNode *binExpr(int parPrec) {
 		scan(&currToken);
 
 		right = binExpr(getOpPrec(tokenType));
-		left = mkASTNode(left, right, tokenToASTOp(tokenType), 0);
+		left = mkASTNode(left, NULL, right, tokenToASTOp(tokenType), 0);
 
 		tokenType = currToken.token;
 		if (tokenType == T_EOF || tokenType == T_SEMI)

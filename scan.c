@@ -76,14 +76,18 @@ static int scanIdent(int c, char *buf, int lim) {
 // Identifiers to tokens
 static int keywordToToken(char *s) {
 	switch (*s) {
-		case 'p':
-			if (!strcmp(s, "printf"))
-				return T_PRINT;
-			break;
-
+		case 'e':
+			if (!strcmp(s, "else"))
+				return T_ELSE;
 		case 'i':
 			if (!strcmp(s, "int"))
 				return T_INT;
+			if (!strcmp(s, "if"))
+				return T_IF;
+			break;
+		case 'p':
+			if (!strcmp(s, "printf"))
+				return T_PRINT;
 			break;
 	}
 

@@ -3,7 +3,7 @@
 #include "decl.h"
 
 // Build and return a generic AST node
-struct astNode *mkASTNode(struct astNode *left, struct astNode *right, int op, int intValue) {
+struct astNode *mkASTNode(struct astNode *left, struct astNode *mid, struct astNode *right, int op, int intValue) {
 	struct astNode *n;
 	n = (struct astNode *)malloc(sizeof(struct astNode));
 
@@ -13,6 +13,7 @@ struct astNode *mkASTNode(struct astNode *left, struct astNode *right, int op, i
 	}
 
 	n->left = left;
+	n->mid = mid;
 	n->right = right;
 	n->op = op;
 	n->val.intValue = intValue;
@@ -22,11 +23,11 @@ struct astNode *mkASTNode(struct astNode *left, struct astNode *right, int op, i
 
 // Build and return an AST leaf node
 struct astNode *mkASTLeaf(int op, int intValue) {
-	return mkASTNode(NULL, NULL, op, intValue);
+	return mkASTNode(NULL, NULL, NULL, op, intValue);
 }
 
 // Build and return a unary AST node
 struct astNode *mkASTUnary(struct astNode *left, int op, int intValue) {
-	return mkASTNode(left, NULL, op, intValue);
+	return mkASTNode(left, NULL, NULL, op, intValue);
 }
 

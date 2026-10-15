@@ -14,6 +14,10 @@ void matchToken(int t, char *str) {
 
 void matchSemi(void) { matchToken(T_SEMI, ";"); }
 void matchIdent(void) { matchToken(T_IDENT, "Identifier"); }
+void matchLbrace(void) { matchToken(T_LBRACE, "{"); }
+void matchRbrace(void) { matchToken(T_RBRACE, "}"); }
+void matchLparen(void) { matchToken(T_LPAREN, "("); }
+void matchRparen(void) { matchToken(T_RPAREN, ")"); }
 
 void fatal(char *s) {
 	fprintf(stderr, "%s on Line %d\n", s, line);

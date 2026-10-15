@@ -13,7 +13,7 @@ struct astNode *binExpr(int parPrec);
 //int interpretAST(struct astNode *n);
 
 // gen.c
-int procAST(struct astNode *n, int reg);
+int procAST(struct astNode *n, int reg, int parOp);
 void genPreamble(void);
 void genPostamble(void);
 void genFreeRegs(void);
@@ -47,6 +47,10 @@ void statements(void);
 void matchToken(int t, char *str);
 void matchSemi(void);
 void matchIdent(void);
+void matchLbrace(void);
+void matchRbrace(void);
+void matchLparen(void);
+void matchRparen(void);
 void fatal(char *s);
 void fatals(char *s1, char *s2);
 void fatald(char *s, int d);

@@ -5,7 +5,16 @@ printf 5*6+3*3;
 
 int a;
 int b;
+int c;
+int d;
+
 a = 5;
 b = 6;
 
+c = b > a;
+d = a > b;
+
 printf a+b;
+
+printf c;
+printf d;

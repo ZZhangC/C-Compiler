@@ -10,11 +10,22 @@ void genPrintInt(int reg) { genASMPrintInt(reg); }
 void genGlobSym(char *sym) { genASMGlobSym(sym); }
 
 // Generate ASM code from ASTs
-int procAST(struct astNode *n, int reg) {
+int procAST(struct astNode *n, int reg, int parOp) {
 	int leftReg, rightReg;
 
-	if (n->left) leftReg = procAST(n->left, -1);
-	if (n->right) rightReg = procAST(n->right, leftReg);
+	switch (n->op) {
+		case A_IF:
+			return genASMIf(n);
+		case A_GLUE:
+			procAST(n->left, NOREG, n->op);
+			genFreeRegs();
+			procAST(n->right, NOREG, n->op);
+			genFreeRegs();
+			return NOREG;
+	}
+
+	if (n->left) leftReg = procAST(n->left, NOREG, n->op);
+	if (n->right) rightReg = procAST(n->right, leftReg, n->op);
 
 	switch (n->op) {
 		case A_ADD:
@@ -34,21 +45,19 @@ int procAST(struct astNode *n, int reg) {
 		case A_ASSIGN:
 			return rightReg;
 		case A_EQUALS:
-			return genASMEqual(leftReg, rightReg);
 		case A_NOTEQUAL:
-			return genASMNotEqual(leftReg, rightReg);
 		case A_LESSTHAN:
-			return genASMLessThan(leftReg, rightReg);
 		case A_GREATTHAN:
-			return genASMGreatThan(leftReg, rightReg);
 		case A_LESSEQUAL:
-			return genASMLessEqual(leftReg, rightReg);
 		case A_GREATEQUAL:
-			return genASMGreatEqual(leftReg, rightReg);
+			if (parOp == A_IF)
+				return genASMCmpAndJmp(n->op, leftReg, rightReg, reg);
+			else
+				return genASMCmpAndSet(n->op, leftReg, rightReg);
+		
 
 		default:
 			fprintf(stderr, "Unknown AST operation %d\n", n->op);
 			exit(1);
 	}
 }
-
